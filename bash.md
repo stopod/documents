@@ -83,3 +83,6 @@ command 1> file1 2> file2 # 標準出力をfile1に、標準エラー出力をfi
 command &> file           # 標準出力と標準エラー出力をfileに書き出す
 command >& file           # &>と同義
 ```
+
+### 参考
+https://www.tohoho-web.com/ex/shell.html
