@@ -364,4 +364,71 @@ Dustin Boswell. リーダブルコード (Kindle の位置No.99-100). Kindle 版
 
 ### 8章 巨大な式を分割する
 
-      
+  - 巨大な式は飲み込みやすい大きさに分割する
+    - 人間は一度に3~4の「もの」しか考えられないらしい
+  
+  - 説明変数
+    - 式を簡単に分割するには、式を表す変数を使えばいい
+      ```
+      if line.split(':')[0].strip() == "root":
+        ...
+      ```
+      ▽説明変数を使えば、以下のようになる
+      ```
+      username = line.split(':')[0].strip()
+      if username == "root":
+        ...
+      ```
+  
+  - 要約変数
+    - 式を説明する必要がない場合でも、式を変数に代入しておくと便利  
+      大きなコードの塊を小さな名前に置き換えて、管理や把握を簡単にする変数のことを要約変数と呼ぶ  
+      例  
+      それほど大きな式ではないが、変数が5つもあるので考えるのにちょっと時間がかかる  
+      このコードが言いたいのは「ユーザは文書を所持しているか？」である
+      ```
+      if (request.user.id == document.owner_id) {
+	      // ユーザはこの文書を編集できる
+      }
+      ```
+      ```
+      if (request.user.id != document.owner_id) {
+	      // 文書は読み取り専用
+      }
+      ```
+      ▽user_owns_documentを最上位に定義したことで、この関数で参照する概念を事前に伝えられる  
+        考えやすい
+      ```
+      final boolean user_owns_document = (request.user.id == document.owner_id);
+
+      if (user_owns_document) {
+	      // ユーザはこの文書を編集できる
+      }
+
+      if (!user_owns_document) {
+	      //文書は読み取り専用
+      }
+      ```
+  
+  - ド・モルガンの法則を使う
+    - `not (a or b or c) === (not a) and (not b) and (not c)`
+    - `not (a and b and c) === (not a) or (not b) or (not c)`
+      - 「notを分配してand/orを反転する」と覚えればいいらしい
+    
+    - 論理式を読みやすくできる例
+      ```
+      if (!(file_exists && !is_protected)) Error("Sorry, could not read file.");
+      ```
+      ▽（括弧減る分読みやすいかもしれない）
+      ```
+      if (!file_exists || is_protected) Error("Sorry, could not read file.");
+      ```
+  
+  - 短絡評価の悪用
+    - 「頭が良い」コードに気を付ける  
+      あとで他の人がコードを読むときにわかりにくくなる
+
+  - 複雑な論理条件は、「if(a < b)...」のような小さな文に分割した  
+    if文の中身が2行以上含まれていない、これは理想的な状態  
+    ただ、常に同じことができるとは限らない  
+    そんな時は、問題を「否定」したり、反対のことを考えてみる
