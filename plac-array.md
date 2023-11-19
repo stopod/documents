@@ -59,8 +59,6 @@ console.log(result);
 
 ---
 
-# 反復処理メソッドであるもの
-
 ## evrey()
 
 Array.prototype.every()  
@@ -321,9 +319,33 @@ const isMiss = sample.some((row) => row.success === false)
 
 ---
 
-# 反復処理メソッドでないもの
+↑ ここまでが反復処理メソッド  
+↓ ここからはちょっと毛色が違うもの
+
+---
 
 ## reduce()
+
+Array.prototype.reduce()  
+https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+
+> 配列のそれぞれの要素に対して、ユーザーが提供した「縮小」コールバック関数を呼び出します。その際、直前の要素における計算結果の返値を渡します。配列のすべての要素に対して縮小関数を実行した結果が単一の値が最終結果になります。
+> コールバックの初回実行時には「直前の計算の返値」は存在しません。 初期値が与えらえた場合は、代わりに使用されることがあります。 そうでない場合は、配列の要素 0 が初期値として使用され、次の要素（0 の位置ではなく 1 の位置）から反復処理が開始されます。
+
+難しいこと言ってるね！  
+そもそも reduce の callBackFn は反復処理メソッドと違って以下のようなものをとる  
+`reduce(callbackFn, initialValue)`
+
+- callbackFn
+  - accumlator 前回の callbackFn の結果
+  - currentValue 現在の要素の値、初回は initialValue があれば array[0], そうでない場合は array[1]
+  - currentIndex currentValue の位置
+  - array reduce が呼び出された配列
+- initialValue コールバックが最初に呼び出された時に accumulator が初期化される値
+
+難しいよね！
+
+accumlator がプリミティブな値である場合は、prevValue(前の値) と表現するほうが適切かもしれない
 
 ##
 
