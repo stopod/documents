@@ -425,3 +425,38 @@ https://zenn.dev/cryptobox/articles/ec99edaaa16b7b
 
 reduce って実はなんでもできちゃうんだよな、という話  
 https://alpacat.com/blog/array-reduce-with-async-function/
+
+## おまけ
+
+非同期処理とは  
+非同期関数は，ECMAScript 2017 で導入された関数のようなもののひとつである。普通の関数定義に，
+async をつけて記述すると非同期関数になる。非同期関数の内部では，await キーワードが使える。
+非同期関数を実行すると，非同期関数の内部がまず実行される。非同期関数の内部では，await で非同
+期処理の結果を待つことができる。非同期関数は await で非同期処理の結果を待つ間，実行を一時停止で
+きる関数であるとみることができる。
+ここで await で待つ対象となる非同期処理とは，Promise オブジェクトを結果として返すものであ
+る。Promise オブジェクトとは，非同期処理の結果を表すオブジェクトである。非同期処理の結果がま
+だ得られていないとき，Promise オブジェクトは pending 状態であり，非同期処理の結果が得られると，
+fulfilled 状態となる。結果が得られると，Promise オブジェクトは結果の値を保持する。
+await は，Promise オブジェクトに結果の値が得られるのを待ち，その結果の値を返す。この仕組みに
+より，非同期処理の結果を待つこと，すなわち同期化ができる。
+次に例を示す。sampleAsyncProc 関数は，1 秒後に結果の値 "result" が得られるようなダミーの非同
+期処理である。非同期関数 afunc1 を実行すると，sampleAsyncProc の呼び出しが行われ，結果が得られ
+るのを await で待つ。1 秒後，結果が得られ，その値 "result" を出力する。
+
+```
+// サンプルの非同期処理
+// 1秒後に結果の値"result"が得られるPromiseオブジェクトを返す
+function sampleAsyncProc() {
+ return new Promise(function(resolve) {
+ setTimeout(function() { resolve("result"); }, 1000);
+ });
+}
+async function afunc1() {
+ const res = await sampleAsyncProc(); // 非同期処理の結果を待つ
+ console.log(res); // "result"
+}
+afunc1();
+```
+
+（参考：JavaScript 徹底攻略 関数 付録:圏論についての補足 57 ページ）
