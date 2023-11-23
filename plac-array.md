@@ -332,7 +332,6 @@ https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Ar
 > 配列のそれぞれの要素に対して、ユーザーが提供した「縮小」コールバック関数を呼び出します。その際、直前の要素における計算結果の返値を渡します。配列のすべての要素に対して縮小関数を実行した結果が単一の値が最終結果になります。
 > コールバックの初回実行時には「直前の計算の返値」は存在しません。 初期値が与えらえた場合は、代わりに使用されることがあります。 そうでない場合は、配列の要素 0 が初期値として使用され、次の要素（0 の位置ではなく 1 の位置）から反復処理が開始されます。
 
-難しいこと言ってるね！  
 そもそも reduce の callBackFn は反復処理メソッドと違って以下のようなものをとる  
 `reduce(callbackFn, initialValue)`
 
@@ -343,9 +342,78 @@ https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Ar
   - array reduce が呼び出された配列
 - initialValue コールバックが最初に呼び出された時に accumulator が初期化される値
 
-難しいよね！
+こんな感じになる  
+`const hoge = fuga.reduce((accumlator, currentValue, currentIndex, array)=>{}, [])`
 
 accumlator がプリミティブな値である場合は、prevValue(前の値) と表現するほうが適切かもしれない
+
+```
+const array1 = [1, 2, 3, 4];
+
+// 0 + 1 + 2 + 3 + 4
+const initialValue = 0;
+const sumWithInitial = array1.reduce((accumulator, currentValue, index) => {
+  console.log('acc', accumulator, `${index}回目`)
+  console.log('cur', currentValue, `${index}回目`)
+   return accumulator + currentValue
+ }, initialValue);
+
+console.log(sumWithInitial);
+// Expected output: 10
+```
+
+https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#%E5%88%9D%E6%9C%9F%E5%80%A4%E3%81%8C%E3%81%AA%E3%81%84%E5%A0%B4%E5%90%88%E3%81%AE_reduce_%E3%81%AE%E5%8B%95%E4%BD%9C
+
+```
+const array = [
+  { key: '100', value: 1000, flag: true },
+  { key: '101', value: 2000, flag: true },
+  { key: '102', value: 3000, flag: false },
+  { key: '103', value: 4000, flag: true },
+  { key: '104', value: 5000, flag: true },
+];
+
+const resultR = array.reduce((acc, cur) => {
+  return [
+    ...acc,
+    cur
+  ]
+}, [])
+
+const resultM = array.map((row) => {
+  return row
+})
+
+console.log(resultR)
+console.log(resultM)
+// これはまったく同じになる
+```
+
+↓ これがたまにある悩み  
+https://qiita.com/TelBouzu/items/08ce089d2747d978fd0f
+
+でも条件に合わないものを skip するだけなら flatMap でもやれるっぽい
+
+```
+const resultF = array.flatMap((row) => {
+  if (row.flag) return row
+  return []
+})
+console.log(resultF)
+```
+
+これは初めて知った  
+flatMap の説明はこれをみる  
+https://qiita.com/NeGI1009/items/4befe4695a4712d96d56
+
+まぁ skip するだけなら filter + map でもいいかもしれない  
+個人的には一つの高階関数でかけることを複数に分けるメリットがあまりないと思っちゃうので使わなかったりする。可読性を突っ込まれると弱い。
+
+reduce は非同期処理で都合がいいことがかける  
+https://penpen-dev.com/blog/async-await-reduce/  
+正直非同期処理についての知識が足りなさすぎるので、勉強していきます。。  
+この辺がそうだよねというやつ  
+https://t-kojima.github.io/2018/07/18/0028-async-await-in-loop/
 
 ##
 
