@@ -23,8 +23,7 @@
 https://typescriptbook.jp/overview/features
 
 - TypeScript は静的型付けを持つ言語で、JavaScript は動的型付けを持つ言語である  
-  両者ともデータ値そのものに型があることは共通しているが、静的型付け言語は変数や関数の引数および戻り値の型がプログラムの実行前にあらかじめ決まっていなければならない。動的型付け言語はそれらが実行時の値によって動的に変化するということ。  
-  (参考 りあクト！① 2-3. JavaScript のデータ型)
+  両者ともデータ値そのものに型があることは共通しているが、静的型付け言語は変数や関数の引数および戻り値の型がプログラムの実行前にあらかじめ決まっていなければならない。動的型付け言語はそれらが実行時の値によって動的に変化するということ。
 
 - ジェネリクスは型も引数のように扱うという発送
 
@@ -372,3 +371,156 @@ type NotPossible = number & string;
 ```
 
 number と string が 1 つの値に共存できるわけがないので、never と推論される
+
+## インデックス型
+
+https://typescriptbook.jp/reference/values-types-variables/object/index-signature
+
+> オブジェクトのフィールド名をあえて指定せず、プロパティのみを指定したい場合
+
+```
+let obj: {
+  [K: string]: number;
+};
+ 
+obj = { a: 1, b: 2}; // OK
+obj.c = 4; // OK
+obj["d"] = 5; // OK
+```
+
+## ジェネリクス（ジェネリック）
+
+```
+const identity = (input) => input
+```
+
+例えばこういう関数があったとき、input は任意の型になる
+
+```
+identity(1) // number
+identity('sample') // string
+```
+
+こうなると事前に型を定めることができない  
+なにも指定しなければ any となる  
+こういう時に使うのがジェネリクスとかジェネリックとかいうやつ（generics）
+
+```
+const identity = <T>(input: T): T => input
+```
+
+型を引数のように扱って、それを T と定義しておく  
+仮引数の中でこの T を使用したり関数内で使用することができる  
+ただし、アロー関数の構文だと JSX の構文と競合するためデフォルトではエラーとなる  
+※<>があると、閉じタグが必要になるので  
+この時の回避方法が
+
+```
+const identity = <T = unknown>(input: T): T => input
+```
+
+あらかじめ unknown 型をデフォルトで設定しておくことで、これは jsx ではないと追加しておく  
+これは TS に対して jsx ではなく型パラメータとして読み取るように指示してるだけなのでふるまいは変わらない、らしい。  
+（バックエンドを開発してるときは React は存在してないのでまだ気にすることはない）  
+TS のプレイグラウンドも設定で jsx を none にしたら普通に通る
+
+これを踏まえたうえでこれを読んでみる  
+どういうときにこれを使うのかがなんとなくわかる  
+https://typescriptbook.jp/reference/generics
+
+#### unknown 型
+
+https://typescriptbook.jp/reference/statements/unknown
+こういうやつ
+
+## 型の再利用
+
+https://typescriptbook.jp/reference/type-reuse
+
+### typeof
+
+与えられた値の型を返すやつ  
+JavaScript の typeof とは異なる
+
+```
+const point = { x: 135, y: 35 };
+type Point = typeof point;
+/**
+ * type Point = {
+ *  x: number;
+ *  y: number;
+ * }
+ */
+```
+
+### keyof
+
+オブジェクトの型からプロパティ名を型として返すやつ
+
+```
+type Person = {
+  name: string;
+};
+type PersonKey = keyof Person;
+// name型
+```
+
+keyof, typeof を組み合わせるとちょっと便利なことができるようになる  
+https://zenn.dev/harryduck/articles/9d09b1c133f9cd
+
+### ユーティリティ型(utility type)
+
+ちょっと解釈しきれていないところが多々あるので一緒に読む
+
+#### Required\<T\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/required
+
+> Required<T>は、T のすべてのプロパティからオプショナルであることを意味する?を取り除くユーティリティ型です。
+
+#### Readonly\<T\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/readonly
+
+> Readonly<T>は、オブジェクトの型 T のプロパティをすべて読み取り専用にするユーティリティ型です。
+
+#### Partial\<T\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/partial
+
+> Partial<T>は、オブジェクトの型 T のすべてのプロパティをオプションプロパティにするユーティリティ型です。
+
+#### Record\<Keys, Type\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/record
+
+> Record<Keys, Type>はプロパティのキーが Keys であり、プロパティの値が Type であるオブジェクトの型を作るユーティリティ型です。
+
+#### Pick\<T, Keys\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/pick
+
+> Pick<T, Keys>は、型 T から Keys に指定したキーだけを含むオブジェクトの型を返すユーティリティ型です。
+
+#### Omit\<T, Keys\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/omit
+
+> Omit<T, Keys>は、オブジェクトの型 T から Keys で指定したプロパティを除いた object 型を返すユーティリティ型です。
+
+#### Exclude\<T, U\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/exclude
+
+> Exclude<T, U>は、ユニオン型 T から U で指定した型を取り除いたユニオン型を返すユーティリティ型です。
+
+### Extract\<T, U\>
+
+https://typescriptbook.jp/reference/type-reuse/utility-types/extract
+
+> Extract<T, U>は、ユニオン型 T から U で指定した型だけを抽出した型を返すユーティリティ型です。
+
+---
+
+使い道とか調べてみたら端的に書いてるところがあった  
+https://gizanbeak.com/post/ts-utility-types
